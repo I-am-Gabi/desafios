@@ -1,0 +1,3 @@
+/Users/gabriela/Documents/developer/posix/desafios/CMakeFiles/edit_cache.dir
+/Users/gabriela/Documents/developer/posix/desafios/CMakeFiles/rebuild_cache.dir
+/Users/gabriela/Documents/developer/posix/desafios/CMakeFiles/desafios.dir
