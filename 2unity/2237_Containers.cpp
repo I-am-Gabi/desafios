@@ -17,7 +17,7 @@ using namespace std;
 #define NUMBER_SIZE 10
 #define NEIGHBORS 8
 
-int min_weight = -1;
+int min_weight = 0;
 vector<bitset<NUMBER_SIZE>> final_containers;
 
 struct container {
@@ -51,7 +51,6 @@ map<container, vector<container>> permute(map<container, vector<container> > pat
     path_map[s].push_back(switch_containers(s, index+4, index+5));
   }
 
-
   for(int index = 0; index <= 3; index++) {
     path_map[s].push_back(switch_containers(s, index, index+4));
   }
@@ -80,13 +79,12 @@ void process(map<container, vector<container> > path_map, container current_ship
         continue;
     }
 
-    printf("weight: %d \n", w);
     int comp = compare(adjacent_list[i].slots);
-    if (comp) min_weight = w;
+    if (comp && w < min_weight) min_weight = w;
 
-    printf("end: %d \n", comp);
-    print(adjacent_list[i].slots);
+    process(path_map, adjacent_list[i]);
   }
+  return;
 }
 
 int main() {
@@ -114,9 +112,9 @@ int main() {
     final_containers.push_back(b);
   }
 
-  print(s.slots);
-
   process(path_map, s);
+
+  printf("%d", min_weight);
 
   return 0;
 }
