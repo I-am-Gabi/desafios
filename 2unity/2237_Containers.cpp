@@ -3,6 +3,7 @@
 #include <bitset>
 #include <iostream>
 #include <map>
+#include <queue>
 
 /*
  * Gabriela Cavalcante
@@ -67,29 +68,51 @@ bool compare(vector<bitset<NUMBER_SIZE>> slot) {
   return true;
 }
 
-void process(map<container, vector<container> > path_map, container current_ship) {
-  path_map[current_ship] = vector<container>();
-  path_map = permute(path_map, current_ship);
-  vector<container> adjacent_list = path_map[current_ship];
+void process(container current_ship) {
+  map<container, vector<container> > path_map;
+  queue<container> queue;
 
-  for (int i = 0; i < adjacent_list.size(); i++) {
-    int w = adjacent_list[i].weight;
+  queue.push(current_ship);
+  int cont = 0;
+
+  while(!queue.empty()) {
+    container c = queue.front();
+    queue.pop();
+
+    int w = c.weight;
+
     if (min_weight > 0) {
-      if (w > min_weight)
+      if (w >= min_weight)
         continue;
     }
 
-    int comp = compare(adjacent_list[i].slots);
-    if (comp && w < min_weight) min_weight = w;
+    //printf("weight: %d \n", c.weight);
+    //print(c.slots);
 
-    process(path_map, adjacent_list[i]);
+    path_map[c] = vector<container>();
+    path_map = permute(path_map, c);
+    vector<container> adjacent_list = path_map[c];
+
+
+
+    int comp = compare(c.slots);
+    if (comp && (w < min_weight || min_weight == 0)) {
+      min_weight = w;
+      printf("weight: %d \n", c.weight);
+      print(c.slots);
+      continue;
+    }
+
+    for (int i = 0; i < (int) adjacent_list.size(); i++) {
+      container v = adjacent_list[i];
+      queue.push(v);
+    }
   }
+
   return;
 }
 
 int main() {
-  map<container, vector<container> > path_map;
-
   container s;
   s.slots = vector<bitset<NUMBER_SIZE>>();
   final_containers = vector<bitset<NUMBER_SIZE>>();
@@ -112,7 +135,7 @@ int main() {
     final_containers.push_back(b);
   }
 
-  process(path_map, s);
+  process(s);
 
   printf("%d", min_weight);
 
