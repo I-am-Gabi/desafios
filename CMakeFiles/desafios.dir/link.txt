@@ -1,1 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/c++    -std=c++11 -Wl,-search_paths_first -Wl,-headerpad_max_install_names  CMakeFiles/desafios.dir/main.cpp.o  -o desafios  
