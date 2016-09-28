@@ -19,10 +19,12 @@ using namespace std;
 #define WORD 24
 #define BLOCK 3
 #define NEIGHBORS 8
+#define PERMUTATIONS 40320
 
 int min_weight = 0;
 vector<bitset<10>> final_containers;
 vector<bitset<10>> initial_containers;
+vector<bitset<WORD>> vertices;
 
 int index_map[8];
 
@@ -59,20 +61,6 @@ container switch_containers(container s, int origin, int destination){
   return new_ship;
 }
 
-map<container, vector<container>> permute(map<container, vector<container> > path_map, container s) {
-  for(int index = 0; index <= 2; index++) {
-    path_map[s].push_back(switch_containers(s, index, index+1));
-    path_map[s].push_back(switch_containers(s, index+4, index+5));
-  }
-
-  for(int index = 0; index <= 3; index++) {
-    path_map[s].push_back(switch_containers(s, index, index+4));
-  }
-
-  return path_map;
-}
-
-
 void print(vector<bitset<10>> ship) {
   unsigned long n_containers = 0;
   while(n_containers < NEIGHBORS) {
@@ -89,6 +77,35 @@ void print(bitset<WORD> ship) {
     if (n_containers == 4) printf("\n");
   }
   printf("\n\n");
+}
+
+bool has(bitset<WORD> x) {
+  for (int i = 0; i < vertices.size(); i++) {
+    if (vertices[i] == x)
+      return true;
+  }
+  vertices.push_back(x);
+  return false;
+}
+
+map<container, vector<container>> permute(map<container, vector<container> > path_map, container s) {
+  container c;
+  for(int index = 0; index <= 2; index++) {
+    c = switch_containers(s, index, index+1);
+    if (!has(c.slots))
+      path_map[s].push_back(c);
+    c = switch_containers(s, index+4, index+5);
+    if (!has(c.slots))
+      path_map[s].push_back(c);
+  }
+
+  for(int index = 0; index <= 3; index++) {
+    c = switch_containers(s, index, index+4);
+    if (!has(c.slots))
+      path_map[s].push_back(c);
+  }
+
+  return path_map;
 }
 
 bool compare(bitset<WORD> slot) {
@@ -118,15 +135,14 @@ void process(container c){
         continue;
     }
 
-    //printf("weight: %d \n", c.weight);
-    //print(c.slots);
-
     path_map[c] = vector<container>();
     path_map = permute(path_map, c);
     vector<container> adjacent_list = path_map[c];
 
     int comp = compare(c.slots);
     if (comp && (w < min_weight || min_weight == 0)) {
+      printf("weight: %d \n", c.weight);
+      print(c.slots);
       min_weight = w;
       continue;
     }
